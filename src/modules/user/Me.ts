@@ -1,0 +1,17 @@
+import { Resolver, Query, Ctx } from 'type-graphql'
+import { User } from '../../entity/User'
+import { MyContext } from 'src/types/MyContext'
+
+@Resolver()
+export class MeResolver {
+  @Query(() => User, { nullable: true, complexity: 5 })
+  async me(@Ctx() ctx: MyContext): Promise<User | null | undefined> {
+    const { userId } = ctx.req.session!
+
+    if (!userId) {
+      return null
+    }
+
+    return User.findOne(userId)
+  }
+}
